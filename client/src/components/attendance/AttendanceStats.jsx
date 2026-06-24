@@ -26,7 +26,7 @@ const AttendanceStats = ({history}) => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-8">
             {stats.map((s) =>(
                 <div key={s.label} className="card card-hover p-5 sm:p-6 flex items-center gap-4 relative overflow-hidden group">
-                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full bg-slate500/70 group-hover:bg-indigo-500/70" />
+                    <div className="absolute left-0 top-0 bottom-0 w-1 rounded-r-full bg-slate-500/70 group-hover:bg-indigo-500/70" />
                     <div className="p-3 bg-slate-200 rounded-lg group-hover:bg-indigo-50 transition-colors duration-200">
                         <s.icon className="size-5 text-slate-600 group-hover:text-indigo-600 transition-colors duration-200" />
                     </div>
