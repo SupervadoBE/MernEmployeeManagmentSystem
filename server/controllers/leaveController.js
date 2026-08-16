@@ -3,7 +3,7 @@ import LeaveApplication from "../models/LeaveApplication.js"
 
 
 // Create leave
-// POST /api/leaves
+// POST /api/leave
 export const createLeave = async (req, res) => {
     try {
         const session = req.session
@@ -49,7 +49,7 @@ export const createLeave = async (req, res) => {
 
 
 // Get leave
-// GET /api/leaves
+// GET /api/leave
 export const getLeave = async (req, res) => {
     try {
         const session = req.session
@@ -91,7 +91,7 @@ export const getLeave = async (req, res) => {
 
 
 // Update leave status
-// PATCH /api/leaves/:id
+// PATCH /api/leave/:id
 export const updateLeaveStatus = async (req, res) => {
     try {
         const { status } = req.body
