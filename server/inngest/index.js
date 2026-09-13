@@ -11,7 +11,9 @@ export const inngest = new Inngest({ id: "employee-managment-system" })
 const autoCheckOut = inngest.createFunction(
   {
     id: "auto-check-out",
-    event: "employee/check-out",
+    triggers: [{
+        event: "employee/check-out",
+    }],
   },
   async ({ event, step }) => {
     const {employeeId, attendanceId} = event.data
@@ -69,7 +71,9 @@ const autoCheckOut = inngest.createFunction(
 const leaveApplicationReminder = inngest.createFunction(
   {
     id: "leave-application-reminder",
-    event: "leave/pending",
+    triggers:[{
+        event: "leave/pending",
+    }]
   },
   async ({ event, step }) => {
     const {leaveApplicationId } = event.data
@@ -106,14 +110,16 @@ const leaveApplicationReminder = inngest.createFunction(
         })
     }
   },
-);
+);              
 
 
 // Cron: Check attendance at 11:30 AM IST (06:00) and email absent employees
 const attendanceReminderCron = inngest.createFunction(
   {
     id: "attendance-reminder-cron",
-    cron: "TZ=Europe/Istanbul 30 11 * * 1-5", // At 11:30 AM on every day-of-week from Monday through Friday.
+    triggers: [{
+        cron: "TZ=Europe/Istanbul 30 11 * * 1-5", // At 11:30 AM on every day-of-week from Monday through Friday.
+    }],
   },
   async ({ step }) => {
     // Step 1: Get today's date range (ISTANBUL)
@@ -183,6 +189,8 @@ const attendanceReminderCron = inngest.createFunction(
                             </div>`
                 })
             })
+            // Promise.all step.run içine olmalı
+            await Promise.all(emailPromises)
         })
     }
 

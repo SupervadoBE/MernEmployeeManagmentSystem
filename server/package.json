@@ -6,7 +6,8 @@
   "scripts": {
     "server": "nodemon server.js",
     "start": "node server.js",
-    "seed": "node seed.js"
+    "seed": "node seed.js",
+    "inngest": "npx inngest-cli@latest dev -u http://localhost:5000/api/inngest"
   },
   "keywords": [],
   "author": "",

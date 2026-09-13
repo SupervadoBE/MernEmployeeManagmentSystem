@@ -139,13 +139,13 @@ export const deleteEmployee = async (req, res) => {
         const employee = await Employee.findById(id)
         if(!employee) {
             return res.status(404).json({success: false, error: "Employee not found" })
-
-            employee.isDeleted = true
-            employee.employmentStatus = "INACTIVE"
-            await employee.save()
-
-            return res.json({ success: true })
         }
+
+        employee.isDeleted = true
+        employee.employmentStatus = "INACTIVE"
+        await employee.save()
+
+        return res.json({ success: true })
     } catch (error) {
         return res.status(500).json({ success: false, error: "Failed to delete employee "})
     }

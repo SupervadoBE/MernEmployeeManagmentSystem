@@ -16,14 +16,14 @@ export const createLeave = async (req, res) => {
         if(employee.isDeleted) {
             return res.status(403).json({ error: "Your account is deactivated. You cannot apply for leave." })
         }
-         const { type, startDate, endDate, reason } = req.body
+        const { type, startDate, endDate, reason } = req.body
 
-         if(!type || !startDate || !endDate || !reason) {
+        if(!type || !startDate || !endDate || !reason) {
             res.status(400).json({ error: "Missing fields" })
-         }
+        }
 
-         const today = new Date()
-         today.setHours(0,0,0,0)
+        const today = new Date()
+        today.setHours(0,0,0,0)
 
         if(new Date(startDate) <= today || new Date(endDate) <= today){
             res.status(400).json({ error: "Leave dates must be in the future." })
@@ -38,7 +38,7 @@ export const createLeave = async (req, res) => {
             type,
             startDate: new Date(startDate),
             endDate: new Date(endDate),
-            reasson,
+            reason,
             status: "PENDING"
         })
 
@@ -84,8 +84,8 @@ export const getLeave = async (req, res) => {
             if(!employee) {
                 return res.status(404).json({ error: "Not Found" })
             }
-            const leaves = LeaveApplication.find({
-                employeeId: employeeId._id
+            const leaves = await LeaveApplication.find({
+                employeeId: employee._id
             }).sort({ createdAt: -1 })
             return res.json({
                 data: leaves,

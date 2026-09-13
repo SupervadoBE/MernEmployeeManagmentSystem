@@ -15,19 +15,22 @@ export const clockInOut = async (req, res) => {
             return res.status(403).json({ error: "Your account is deactivated. You connot clock in/out" })
         }
 
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
-
-        const existing = await Attendance.findOne({employeeId: employee._id, date: today})
-
         const now = new Date()
+
+        const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0)
+        const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999)
+
+        const existing = await Attendance.findOne({
+            employeeId: employee._id,
+            checkIn: { $gte: startOfToday, $lte: endOfToday }
+        })
 
         if(!existing) {
             //const isLate = now.getHours() >= 9 && now.getMinutes() > 0 ders hatası
             const isLate = now.getHours() > 9 || (now.getHours() === 9 && now.getMinutes() > 0);
             const attendance = await Attendance.create({
                 employeeId: employee._id,
-                date: today,
+                date: startOfToday,
                 checkIn: now,
                 status: isLate ? "LATE" : "PRESENT",
             })
@@ -35,10 +38,11 @@ export const clockInOut = async (req, res) => {
             await inngest.send({
                 name: "employee/check-out",
                 data: {
-                    employeeId: employee._id,
-                    attendanceId: attendance._id,
+                    employeeId: employee._id.toString(),
+                    attendanceId: attendance._id.toString(),
                 }
             })
+            console.log("Inngest Event Sent: employee/check-out")
 
             return res.json({ success: true, type: "CHECK_IN", data: attendance})
         } else if(!existing.checkOut) {

@@ -2,13 +2,33 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { DEPARTMENTS } from "../assets/assets"
 import { Loader2Icon } from "lucide-react"
+import toast from "react-hot-toast"
+import api from "../api/axios"
 
 const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(false)
     const isEditMode = !!initialData
+
     const handleSubmit = async (e) =>{
         e.preventDefault()
+        setLoading(true)
+        const formData = new FormData(e.currentTarget)
+        if(isEditMode) {
+            const pwd = formData.get("password")
+            if(!pwd) formData.delete("password")
+        }
+
+        try {
+            const url = isEditMode ? `/employees/${initialData.id}` : "/employees"
+            const method = isEditMode ? "put" : "post"
+            await api[method](url, formData)
+            onSuccess ? onSuccess() : navigate("/employees")
+        } catch (error) {
+            toast.error(error.response?.data?.error || error.message)
+        } finally {
+            setLoading(false)
+        }
     }
     return (
         <form onSubmit={handleSubmit} className="space-y-6 max-w-3xl animate-fade-in">
@@ -26,11 +46,11 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
                     </div>
                     <div>
                         <label htmlFor="phone" className="block mb-2">Phone Number</label>
-                        <input id="phone" name="lastName" required defaultValue={initialData?.phone} />
+                        <input id="phone" name="phone" required defaultValue={initialData?.phone} />
                     </div>
                     <div>
                         <label htmlFor="joinDate" className="block mb-2">Join Date</label>
-                        <input id="joinDate" type="date" name="lastName" required defaultValue={initialData?.joinDate ? new Date(initialData.joinDate).toISOString().split("T")[0] : "" } />
+                        <input id="joinDate" type="date" name="joinDate" required defaultValue={initialData?.joinDate ? new Date(initialData.joinDate).toISOString().split("T")[0] : "" } />
                     </div>
                     <div className="sm:col-span-2">
                         <label htmlFor="bio" className="block mb-2">Bio (Optinal)</label>
@@ -115,7 +135,7 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
                 <button type="button" className="btn-secondary" onClick={()=>(onCancel ? onCancel() : navigate(-1))}>
                     Cancel
                 </button>
-                <button type="button" disabled={loading} className="btn-primary flex items-center justify-center">
+                <button type="submit" disabled={loading} className="btn-primary flex items-center justify-center">
                     {loading && <Loader2Icon className="size-4 mr-2 animate-spin" />}
                     {isEditMode ? "Update Employee" : "Create Employee"}
                 </button>
